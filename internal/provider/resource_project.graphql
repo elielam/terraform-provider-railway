@@ -1,0 +1,50 @@
+# @genqlient(for: "Project.team", pointer: true)
+fragment Project on Project {
+  id
+  name
+  description
+  isPublic
+  prDeploys
+  team {
+    id
+  }
+  environments {
+    edges {
+      node {
+        id
+        name
+        createdAt
+      }
+    }
+  }
+}
+
+query getProject($id: String!) {
+  project(id: $id) {
+    ...Project
+  }
+}
+
+# @genqlient(for: "ProjectCreateInput.teamId", pointer: true)
+# @genqlient(for: "ProjectCreateInput.repo", pointer: true)
+mutation createProject(
+  $input: ProjectCreateInput!
+) {
+  projectCreate(input: $input) {
+    ...Project
+  }
+}
+
+# @genqlient(for: "ProjectUpdateInput.baseEnvironmentId", pointer: true, omitempty: true)
+mutation updateProject(
+  $id: String!
+  $input: ProjectUpdateInput!
+) {
+  projectUpdate(id: $id, input: $input) {
+    ...Project
+  }
+}
+
+mutation deleteProject($id: String!) {
+  projectDelete(id: $id)
+}

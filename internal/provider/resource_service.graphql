@@ -1,0 +1,161 @@
+fragment Service on Service {
+  id
+  name
+  projectId
+}
+
+query getService($id: String!) {
+  service(id: $id) {
+    ...Service
+  }
+}
+
+# @genqlient(for: "ServiceCreateInput.environmentId", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceCreateInput.branch", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceCreateInput.source", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceSourceInput.image", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceSourceInput.repo", omitempty: true, pointer: true)
+mutation createService(
+  $input: ServiceCreateInput!
+) {
+  serviceCreate(input: $input) {
+    ...Service
+  }
+}
+
+mutation updateService(
+  $id: String!
+  $input: ServiceUpdateInput!
+) {
+  serviceUpdate(id: $id, input: $input) {
+    ...Service
+  }
+}
+
+# @genqlient(for: "ServiceInstance.cronSchedule", pointer: true)
+# @genqlient(for: "ServiceInstance.source", pointer: true)
+# @genqlient(for: "ServiceSource.image", pointer: true)
+# @genqlient(for: "ServiceSource.repo", pointer: true)
+# @genqlient(for: "ServiceInstance.rootDirectory", pointer: true)
+# @genqlient(for: "ServiceInstance.railwayConfigFile", pointer: true)
+query getServiceInstance(
+  $environmentId: String!
+  $serviceId: String!
+) {
+  serviceInstance(environmentId: $environmentId, serviceId: $serviceId) {
+    source {
+      image
+      repo
+    }
+    rootDirectory
+    railwayConfigFile
+    cronSchedule
+  }
+}
+
+# @genqlient(for: "ServiceInstanceUpdateInput.cronSchedule", pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.watchPatterns", pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.source", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.nixpacksPlan", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.numReplicas", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.region", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.builder", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.buildCommand", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.startCommand", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.healthcheckPath", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.healthcheckTimeout", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.restartPolicyType", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceInstanceUpdateInput.restartPolicyMaxRetries", omitempty: true, pointer: true)
+mutation updateServiceInstance(
+  $serviceId: String!
+  $input: ServiceInstanceUpdateInput!
+) {
+  serviceInstanceUpdate(
+    environmentId: null
+    input: $input
+    serviceId: $serviceId
+  )
+}
+
+mutation deleteService($id: String!) {
+  serviceDelete(id: $id)
+}
+
+fragment Volume on Volume {
+  id
+  name
+  volumeInstances {
+    edges {
+      node {
+        id
+        environmentId
+        serviceId
+        mountPath
+        sizeMB
+      }
+    }
+  }
+}
+
+query getVolumeInstances($id: String!) {
+  project(id: $id) {
+    volumes {
+      edges {
+        node {
+          ...Volume
+        }
+      }
+    }
+  }
+}
+
+# @genqlient(for: "VolumeCreateInput.serviceId", pointer: true)
+# @genqlient(for: "VolumeCreateInput.environmentId", omitempty: true, pointer: true)
+mutation createVolume(
+  $input: VolumeCreateInput!
+) {
+  volumeCreate(input: $input) {
+    ...Volume
+  }
+}
+
+mutation updateVolume(
+  $id: String!
+  $input: VolumeUpdateInput!
+) {
+  volumeUpdate(volumeId: $id, input: $input) {
+    ...Volume
+  }
+}
+
+# @genqlient(for: "VolumeInstanceUpdateInput.state", omitempty: true, pointer: true)
+mutation updateVolumeInstance(
+  $id: String!
+  $input: VolumeInstanceUpdateInput!
+) {
+  volumeInstanceUpdate(volumeId: $id, environmentId: null, input: $input)
+}
+
+mutation deleteVolume($id: String!) {
+  volumeDelete(volumeId: $id)
+}
+
+# @genqlient(for: "ServiceConnectInput.branch", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceConnectInput.image", omitempty: true, pointer: true)
+# @genqlient(for: "ServiceConnectInput.repo", omitempty: true, pointer: true)
+mutation connectService(
+  $id: String!
+  $input: ServiceConnectInput!
+) {
+  serviceConnect(id: $id, input: $input) {
+     ...Service
+  }
+}
+
+mutation disconnectService(
+  $id: String!
+) {
+  serviceDisconnect(id: $id) {
+    id
+  }
+}

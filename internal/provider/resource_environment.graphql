@@ -1,0 +1,34 @@
+fragment Environment on Environment {
+  id
+  name
+  projectId
+}
+
+query getEnvironment($id: String!) {
+  environment(id: $id) {
+    ...Environment
+  }
+}
+
+query getEnvironments($projectId: String!) {
+  environments(projectId: $projectId) {
+    edges {
+      node {
+        ...Environment
+      }
+    }
+  }
+}
+
+# @genqlient(for: "EnvironmentCreateInput.sourceEnvironmentId", omitempty: true, pointer: true)
+mutation createEnvironment(
+  $input: EnvironmentCreateInput!
+) {
+  environmentCreate(input: $input) {
+    ...Environment
+  }
+}
+
+mutation deleteEnvironment($id: String!) {
+  environmentDelete(id: $id)
+}
